@@ -1,0 +1,4 @@
+requests
+zipfile
+selenium
+undetected-chromedriver
