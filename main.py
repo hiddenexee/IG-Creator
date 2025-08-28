@@ -168,7 +168,6 @@ def get_chromedriver(proxy=None, thread_id=0):
     except Exception as e:
         print(e)
 
-
 class InstagramAccountCreator:
     def __init__(self, proxy: str = None, thread_id: int = 0):
         self.driver = None
@@ -343,7 +342,6 @@ class InstagramAccountCreator:
                 self.driver.quit()
             self.cleanup()
 
-
 def main(proxy: str, thread_id: int):
     while True:
         try:
@@ -355,7 +353,6 @@ def main(proxy: str, thread_id: int):
         except Exception as e:
             print(f"Thread {thread_id} hatası: {e}")
 
-
 def get_proxies(filename):
     try:
         with open(filename, "r") as file:
@@ -363,7 +360,6 @@ def get_proxies(filename):
             return proxies
     except FileNotFoundError:
         return []
-
 
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
