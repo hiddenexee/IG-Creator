@@ -42,6 +42,7 @@ def get_chromedriver(proxy=None, thread_id=0):
     try:
         chrome_options = uc.ChromeOptions()
 
+        chrome_options.add_argument("--lang=tr")
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument(f"--remote-debugging-port={get_random_port()}")
