@@ -2,6 +2,8 @@
   <h1>📷 Instagram Account Creator</h1>
 </div>
 
+Note: For the paid mobile API project, you can contact us via Telegram.
+
 # Usage:
 
 - register kopechka.com & create api key
