@@ -324,7 +324,7 @@ class InstagramAccountCreator:
                                 print("[!] Bad Proxy")
                                 break
                             code_error = self.driver.find_element(By.XPATH,
-                                                                  "//*[contains(text(), 'Üzgünüz! Şu anda onay kodunu doğrulamada sorun yaşıyoruz')]")
+                                                                  "//*[contains(text(), 'Sorry, there was a problem with your request.')]")
                             if code_error.is_displayed():
                                 print("[!] Bad Proxy")
                         except:
