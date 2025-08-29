@@ -27,6 +27,7 @@ faker = faker.Faker(locale='tr-TR')
 
 resolution = ['1366x768', '1600x900', '1920x1080', '2560x1440', '3840x2160', '1280x800', '1920x1200', '1440x900']
 
+
 # lang = 'tr'
 # country = 'tr-TR'
 
@@ -223,8 +224,7 @@ class InstagramAccountCreator:
             if "Instagram" not in self.driver.title:
                 return False
 
-            self.wait.until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "[href='/accounts/emailsignup/']"))).click()
+            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[href='/accounts/emailsignup/']"))).click()
             time.sleep(3)
 
             email_input = self.wait.until(
@@ -254,7 +254,8 @@ class InstagramAccountCreator:
             time.sleep(5)
 
             try:
-                month_select = Select(self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[title='Month:'], [title='Ay:']"))))
+                month_select = Select(self.wait.until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "[title='Month:'], [title='Ay:']"))))
                 month_select.select_by_value(str(random.randint(1, 12)))
 
                 day_select = Select(self.driver.find_element(By.CSS_SELECTOR, "[title='Day:'], [title='Gün:']"))
@@ -282,8 +283,7 @@ class InstagramAccountCreator:
             cancel_mail(self.order_id)
 
             try:
-                code_input = self.wait.until(
-                    EC.presence_of_element_located((By.XPATH, "//input[@name='email_confirmation_code']")))
+                code_input = self.wait.until(EC.presence_of_element_located((By.XPATH, "//input[@name='email_confirmation_code']")))
                 code_input.clear()
                 code_input.send_keys(code)
                 time.sleep(1)
@@ -311,15 +311,17 @@ class InstagramAccountCreator:
                     with lock:
                         with open("accounts.txt", "a", encoding="utf-8") as f:
                             f.write(account + "\n")
-                
+
                 if 'accounts/emailsignup/' in current_url:
                     try:
                         proxy_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'flagged as an open proxy')]")
                         if proxy_error.is_displayed():
                             print("[!] Bad Proxy")
+                            break
                         code_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Sorry, there was a problem with your request.') or contains(text(), 'Üzgünüz! Şu anda onay kodunu doğrulamada sorun yaşıyoruz')]")
                         if code_error.is_displayed():
                             print("[!] Bad Proxy")
+                            break
                     except:
                         pass
 
@@ -329,7 +331,7 @@ class InstagramAccountCreator:
             # self.driver.execute_script("window.localStorage.clear();")
             # self.driver.execute_script("window.sessionStorage.clear();")
         except Exception as e:
-                print(f"Kayıt hatası: {e}")
+            print(f"Kayıt hatası: {e}")
         finally:
             if self.driver:
                 self.driver.quit()
