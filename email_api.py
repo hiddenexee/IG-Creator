@@ -10,7 +10,7 @@ def get_email():
     while True:
         try:
             payload = {
-                "domain": "mail.com",
+                "domain": "asia.com",
                 "site": "instagram.com"
             }
 
