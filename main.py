@@ -168,6 +168,7 @@ def get_chromedriver(proxy=None, thread_id=0):
     except Exception as e:
         print(e)
 
+
 class InstagramAccountCreator:
     def __init__(self, proxy: str = None, thread_id: int = 0):
         self.driver = None
@@ -272,8 +273,7 @@ class InstagramAccountCreator:
                     print(f"Doğum tarihi hatası: {e}")
 
                 try:
-                    error_element = self.driver.find_element(By.XPATH,
-                                                             "//*[contains(text(), 'Senin İçin Bir Hesap Oluşturamadık')]")
+                    error_element = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Senin İçin Bir Hesap Oluşturamadık')]")
                     if error_element.is_displayed():
                         print("Hesap oluşturma hatası")
                         return
@@ -318,13 +318,10 @@ class InstagramAccountCreator:
 
                     if 'accounts/emailsignup/' in current_url:
                         try:
-                            proxy_error = self.driver.find_element(By.XPATH,
-                                                                   "//*[contains(text(), 'flagged as an open proxy')]")
+                            proxy_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'flagged as an open proxy')]")
                             if proxy_error.is_displayed():
                                 print("[!] Bad Proxy")
-                                break
-                            code_error = self.driver.find_element(By.XPATH,
-                                                                  "//*[contains(text(), 'Sorry, there was a problem with your request.')]")
+                            code_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Sorry, there was a problem with your request.') or contains(text(), 'Üzgünüz! Şu anda onay kodunu doğrulamada sorun yaşıyoruz')]")
                             if code_error.is_displayed():
                                 print("[!] Bad Proxy")
                         except:
@@ -353,6 +350,7 @@ def main(proxy: str, thread_id: int):
         except Exception as e:
             print(f"Thread {thread_id} hatası: {e}")
 
+
 def get_proxies(filename):
     try:
         with open(filename, "r") as file:
@@ -360,6 +358,7 @@ def get_proxies(filename):
             return proxies
     except FileNotFoundError:
         return []
+
 
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
