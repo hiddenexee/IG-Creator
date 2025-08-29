@@ -168,7 +168,6 @@ def get_chromedriver(proxy=None, thread_id=0):
     except Exception as e:
         print(e)
 
-
 class InstagramAccountCreator:
     def __init__(self, proxy: str = None, thread_id: int = 0):
         self.driver = None
@@ -207,132 +206,130 @@ class InstagramAccountCreator:
         self.wait = WebDriverWait(self.driver, 20)
 
         try:
+            self.get_info()
+            width, height = map(int, random.choice(resolution).split('x'))
+            self.driver.set_window_size(width, height)
+
+            self.driver.get("https://www.instagram.com/")
+            time.sleep(5)
+
             try:
-                self.get_info()
-                width, height = map(int, random.choice(resolution).split('x'))
-                self.driver.set_window_size(width, height)
+                alert = self.driver.switch_to.alert
+                alert.dismiss()
+                return
+            except:
+                pass
 
-                self.driver.get("https://www.instagram.com/")
-                time.sleep(5)
+            if "Instagram" not in self.driver.title:
+                return False
 
-                try:
-                    alert = self.driver.switch_to.alert
-                    alert.dismiss()
-                    return
-                except:
-                    pass
+            self.wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "[href='/accounts/emailsignup/']"))).click()
+            time.sleep(3)
 
-                if "Instagram" not in self.driver.title:
-                    return False
+            email_input = self.wait.until(
+                EC.presence_of_element_located((By.XPATH, "//input[@name='emailOrPhone']")))
+            email_input.clear()
+            email_input.send_keys(self.email)
+            time.sleep(0.5)
 
-                self.wait.until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "[href='/accounts/emailsignup/']"))).click()
+            password_input = self.driver.find_element(By.XPATH, "//input[@name='password']")
+            password_input.clear()
+            password_input.send_keys(self.password)
+            time.sleep(2)
+
+            try:
+                refresh_suggestion = self.wait.until(EC.element_to_be_clickable((By.XPATH, "(//button/span)[2]")))
+                refresh_suggestion.click()
                 time.sleep(3)
+            except:
+                print("Öneri yenileme bulunamadı")
+                return False
 
-                email_input = self.wait.until(
-                    EC.presence_of_element_located((By.XPATH, "//input[@name='emailOrPhone']")))
-                email_input.clear()
-                email_input.send_keys(self.email)
-                time.sleep(0.5)
+            username_input = self.driver.find_element(By.CSS_SELECTOR, "input[name='username']")
+            self.username = username_input.get_attribute("value")
 
-                password_input = self.driver.find_element(By.XPATH, "//input[@name='password']")
-                password_input.clear()
-                password_input.send_keys(self.password)
+            signup_button = self.driver.find_element(By.XPATH, "//button[@type='submit']")
+            signup_button.click()
+            time.sleep(5)
+
+            try:
+                month_select = Select(self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[title='Month:'], [title='Ay:']"))))
+                month_select.select_by_value(str(random.randint(1, 12)))
+
+                day_select = Select(self.driver.find_element(By.CSS_SELECTOR, "[title='Day:'], [title='Gün:']"))
+                day_select.select_by_value(str(random.randint(1, 28)))
+
+                year_select = Select(self.driver.find_element(By.CSS_SELECTOR, "[title='Year:'], [title='Yıl:']"))
+                year_select.select_by_value(str(random.randint(1990, 2002)))
+
+                next_button = self.driver.find_element(By.XPATH, "(//button[@type='button'])[2]")
+                next_button.click()
+                time.sleep(3)
+            except Exception as e:
+                print(f"Doğum tarihi hatası: {e}")
+
+            try:
+                error_element = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Senin İçin Bir Hesap Oluşturamadık')]")
+                if error_element.is_displayed():
+                    print("Hesap oluşturma hatası")
+                    return
+            except:
+                pass
+
+            code = get_code(self.order_id)
+            print(f"Code: {code}")
+            cancel_mail(self.order_id)
+
+            try:
+                code_input = self.wait.until(
+                    EC.presence_of_element_located((By.XPATH, "//input[@name='email_confirmation_code']")))
+                code_input.clear()
+                code_input.send_keys(code)
+                time.sleep(1)
+
+                self.driver.find_element(By.XPATH, "(//div[@role='button'])[2]").click()
+                time.sleep(10)
+            except Exception as e:
+                print(f"Kod girişi hatası: {e}")
+
+            for _ in range(10):
+                current_url = self.driver.current_url
+
+                if current_url == 'https://www.instagram.com/':
+                    time.sleep(8)
+
+                    cookies = self.driver.get_cookies()
+                    cookie_str = "; ".join([f"{cookie['name']}={cookie['value']}" for cookie in cookies])
+                    cookie_base64 = base64.b64encode(cookie_str.encode()).decode()
+
+                    account = f"{self.username}:{self.password}:{self.email}:{cookie_base64}"
+                    print(f"[{self.username}] Account Created")
+
+                    # self.threads_register()
+
+                    with lock:
+                        with open("accounts.txt", "a", encoding="utf-8") as f:
+                            f.write(account + "\n")
+                    break
+
+                if 'accounts/emailsignup/' in current_url:
+                    try:
+                        proxy_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'flagged as an open proxy')]")
+                        if proxy_error.is_displayed():
+                            print("[!] Bad Proxy")
+                        code_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Sorry, there was a problem with your request.') or contains(text(), 'Üzgünüz! Şu anda onay kodunu doğrulamada sorun yaşıyoruz')]")
+                        if code_error.is_displayed():
+                            print("[!] Bad Proxy")
+                    except:
+                        pass
+
                 time.sleep(2)
 
-                try:
-                    refresh_suggestion = self.wait.until(EC.element_to_be_clickable((By.XPATH, "(//button/span)[2]")))
-                    refresh_suggestion.click()
-                    time.sleep(3)
-                except:
-                    print("Öneri yenileme bulunamadı")
-                    return False
-
-                username_input = self.driver.find_element(By.CSS_SELECTOR, "input[name='username']")
-                self.username = username_input.get_attribute("value")
-
-                signup_button = self.driver.find_element(By.XPATH, "//button[@type='submit']")
-                signup_button.click()
-                time.sleep(5)
-
-                try:
-                    month_select = Select(
-                        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "[title='Month:']"))))
-                    month_select.select_by_value(str(random.randint(1, 12)))
-
-                    day_select = Select(self.driver.find_element(By.CSS_SELECTOR, "[title='Day:']"))
-                    day_select.select_by_value(str(random.randint(1, 28)))
-
-                    year_select = Select(self.driver.find_element(By.CSS_SELECTOR, "[title='Year:']"))
-                    year_select.select_by_value(str(random.randint(1990, 2002)))
-
-                    next_button = self.driver.find_element(By.XPATH, "(//button[@type='button'])[2]")
-                    next_button.click()
-                    time.sleep(3)
-                except Exception as e:
-                    print(f"Doğum tarihi hatası: {e}")
-
-                try:
-                    error_element = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Senin İçin Bir Hesap Oluşturamadık')]")
-                    if error_element.is_displayed():
-                        print("Hesap oluşturma hatası")
-                        return
-                except:
-                    pass
-
-                code = get_code(self.order_id)
-                print(f"Code: {code}")
-                cancel_mail(self.order_id)
-
-                try:
-                    code_input = self.wait.until(
-                        EC.presence_of_element_located((By.XPATH, "//input[@name='email_confirmation_code']")))
-                    code_input.clear()
-                    code_input.send_keys(code)
-                    time.sleep(1)
-
-                    self.driver.find_element(By.XPATH, "(//div[@role='button'])[2]").click()
-                    time.sleep(10)
-                except Exception as e:
-                    print(f"Kod girişi hatası: {e}")
-
-                for _ in range(10):
-                    current_url = self.driver.current_url
-
-                    if current_url == 'https://www.instagram.com/':
-                        time.sleep(8)
-
-                        cookies = self.driver.get_cookies()
-                        cookie_str = "; ".join([f"{cookie['name']}={cookie['value']}" for cookie in cookies])
-                        cookie_base64 = base64.b64encode(cookie_str.encode()).decode()
-
-                        account = f"{self.username}:{self.password}:{self.email}:{cookie_base64}"
-                        print(f"[{self.username}] Account Created")
-
-                        # self.threads_register()
-
-                        with lock:
-                            with open("accounts.txt", "a", encoding="utf-8") as f:
-                                f.write(account + "\n")
-                        break
-
-                    if 'accounts/emailsignup/' in current_url:
-                        try:
-                            proxy_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'flagged as an open proxy')]")
-                            if proxy_error.is_displayed():
-                                print("[!] Bad Proxy")
-                            code_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'Sorry, there was a problem with your request.') or contains(text(), 'Üzgünüz! Şu anda onay kodunu doğrulamada sorun yaşıyoruz')]")
-                            if code_error.is_displayed():
-                                print("[!] Bad Proxy")
-                        except:
-                            pass
-
-                    time.sleep(2)
-
-                # self.driver.delete_all_cookies()
-                # self.driver.execute_script("window.localStorage.clear();")
-                # self.driver.execute_script("window.sessionStorage.clear();")
-            except Exception as e:
+            # self.driver.delete_all_cookies()
+            # self.driver.execute_script("window.localStorage.clear();")
+            # self.driver.execute_script("window.sessionStorage.clear();")
+        except Exception as e:
                 print(f"Kayıt hatası: {e}")
         finally:
             if self.driver:
@@ -350,7 +347,6 @@ def main(proxy: str, thread_id: int):
         except Exception as e:
             print(f"Thread {thread_id} hatası: {e}")
 
-
 def get_proxies(filename):
     try:
         with open(filename, "r") as file:
@@ -358,7 +354,6 @@ def get_proxies(filename):
             return proxies
     except FileNotFoundError:
         return []
-
 
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
