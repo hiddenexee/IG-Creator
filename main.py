@@ -367,10 +367,4 @@ if __name__ == '__main__':
 
     threads = []
     for i, p in enumerate(proxies):
-        t = threading.Thread(target=main, args=(p, i))
-        threads.append(t)
-        t.start()
-        time.sleep(3)
-
-    for t in threads:
-        t.join()
+        threading.Thread(target=main, args=(p, i)).start()
