@@ -311,8 +311,7 @@ class InstagramAccountCreator:
                     with lock:
                         with open("accounts.txt", "a", encoding="utf-8") as f:
                             f.write(account + "\n")
-                    break
-
+                
                 if 'accounts/emailsignup/' in current_url:
                     try:
                         proxy_error = self.driver.find_element(By.XPATH, "//*[contains(text(), 'flagged as an open proxy')]")
