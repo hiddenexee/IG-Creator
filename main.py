@@ -133,7 +133,7 @@ def get_chromedriver(proxy=None, thread_id=0):
             chrome_options.add_argument(f"--load-extension={os.path.abspath(pluginfolder)}")
 
         chrome_options.add_argument(
-            f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36")
+            f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{random.randint(132, 139)}.0.0.0 Safari/537.36")
 
         '''prefs = {
             "profile.default_content_setting_values": {
