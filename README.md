@@ -10,7 +10,7 @@ Note: For the paid mobile API project, you can contact us via Telegram.
 - pip install -r requirements.txt
 - Add api key to email_api.py & Edit data/proxy.txt
 - main.py mobil proxy reset link (opsiyonel) & py main.py
-- enjoy!
+- enjoy! (Log in to accounts with cookies!)
 
 # Features:
 
