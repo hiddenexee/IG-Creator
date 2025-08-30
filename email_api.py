@@ -1,4 +1,5 @@
 import time
+import random
 import requests
 
 headers = {
@@ -10,7 +11,7 @@ def get_email():
     while True:
         try:
             payload = {
-                "domain": "asia.com",
+                "domain": random.choice(['dr.com', 'asia.com', 'mail.com']),
                 "site": "instagram.com"
             }
 
