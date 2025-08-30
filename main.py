@@ -133,7 +133,7 @@ def get_chromedriver(proxy=None, thread_id=0):
             chrome_options.add_argument(f"--load-extension={os.path.abspath(pluginfolder)}")
 
         chrome_options.add_argument(
-            f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{random.randint(132, 139)}.0.0.0 Safari/537.36")
+            f"--user-agent={random.choice(agents)}")
 
         '''prefs = {
             "profile.default_content_setting_values": {
@@ -357,9 +357,18 @@ def get_proxies(filename):
     except FileNotFoundError:
         return []
 
+def get_agents(filename):
+    try:
+        with open(filename, "r") as file:
+            agents = [line.strip() for line in file if line.strip()]
+            return agents
+    except FileNotFoundError:
+        return []
+
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
     proxies = get_proxies("data/proxy.txt")
+    agents = get_proxies("data/agents.txt")
 
     threads = []
     for i, p in enumerate(proxies):
