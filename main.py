@@ -349,7 +349,7 @@ def main(proxy: str, thread_id: int):
         except Exception as e:
             print(f"Thread {thread_id} hatası: {e}")
 
-def get_proxies(filename):
+def get_file(filename):
     try:
         with open(filename, "r") as file:
             proxies = [line.strip() for line in file if line.strip()]
@@ -357,18 +357,10 @@ def get_proxies(filename):
     except FileNotFoundError:
         return []
 
-def get_agents(filename):
-    try:
-        with open(filename, "r") as file:
-            agents = [line.strip() for line in file if line.strip()]
-            return agents
-    except FileNotFoundError:
-        return []
-
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
-    proxies = get_proxies("data/proxy.txt")
-    agents = get_agents("data/agents.txt")
+    proxies = get_file("data/proxy.txt")
+    agents = get_file("data/agents.txt")
 
     threads = []
     for i, p in enumerate(proxies):
