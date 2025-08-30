@@ -368,7 +368,7 @@ def get_agents(filename):
 if __name__ == '__main__':
     proxy_reset = 'mobil proxy reset link (opsiyonel)'
     proxies = get_proxies("data/proxy.txt")
-    agents = get_proxies("data/agents.txt")
+    agents = get_agents("data/agents.txt")
 
     threads = []
     for i, p in enumerate(proxies):
